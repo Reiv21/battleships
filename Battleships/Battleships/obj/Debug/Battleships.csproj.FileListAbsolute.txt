@@ -1,0 +1,7 @@
+E:\Battleships\Battleships\bin\Debug\Battleships.exe.config
+E:\Battleships\Battleships\bin\Debug\Battleships.exe
+E:\Battleships\Battleships\bin\Debug\Battleships.pdb
+E:\Battleships\Battleships\obj\Debug\Battleships.csproj.AssemblyReference.cache
+E:\Battleships\Battleships\obj\Debug\Battleships.csproj.CoreCompileInputs.cache
+E:\Battleships\Battleships\obj\Debug\Battleships.exe
+E:\Battleships\Battleships\obj\Debug\Battleships.pdb
