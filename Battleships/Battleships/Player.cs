@@ -168,7 +168,6 @@ namespace Battleships
         {
             Console.WriteLine("Atak gracza: " + name);
             board.PrintBoardAttack(boardToShoot.board);
-            enemy.board.PrintBoard();
             int[] pos = board.ValidateAndGetPlayerMove();
             if (boardToShoot.board[pos[1], pos[0]] == 3 || boardToShoot.board[pos[1], pos[0]] == 2)
             {

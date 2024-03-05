@@ -41,7 +41,7 @@ namespace Battleships
         public void SetupShips()
         {
             int shipAmount = 0;
-            while (shipAmount < 0)
+            while (shipAmount < 4)
             {
                 Console.Clear();
                 SetupShip(Ship.ShipType.one, "jeden");
@@ -49,7 +49,7 @@ namespace Battleships
             }
 
             shipAmount = 0;
-            while (shipAmount < 0)
+            while (shipAmount < 3)
             {
                 Console.Clear();
                 SetupShip(Ship.ShipType.two, "dwa");
@@ -57,7 +57,7 @@ namespace Battleships
             }
 
             shipAmount = 0;
-            while (shipAmount < 0)
+            while (shipAmount < 2)
             {
                 if (!CanPlaceObject(1, 3) || !CanPlaceObject(3, 1))
                 {
