@@ -8,7 +8,7 @@ namespace Battleships
         public static bool PlayAgain()
         {
             Console.WriteLine("Czy chcesz zagrac ponownie? (t/n)");
-            string input = Console.ReadLine();
+            string input = Console.ReadLine().ToLower();
             if (input == "t")
             {
                 return true;
@@ -79,7 +79,25 @@ namespace Battleships
                 Console.WriteLine("Kliknij aby zaczac runde dla gracza: " + player.name);
                 Console.ReadLine();
                 Console.Clear();
+
+
+
+
+
+
+
+
                 player.board.SetupShips();
+
+
+
+
+
+
+
+
+
+
                 while (true)
                 {
                     Console.WriteLine("Kliknij aby zaczac runde ataku dla gracza: " + player.name);

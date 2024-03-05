@@ -55,6 +55,11 @@ namespace Battleships
         {
             Random random = new Random();
             int[] pos = new int[2];
+
+            pos[1] = random.Next(10);
+            pos[0] = random.Next(10);
+            Console.WriteLine("Komputer strzela na  : " + pos[1] + " " + pos[0]);
+
             for (int i = 0; i < 10; i++)
             {
                 for (int j = 0; j < 10; j++)
@@ -65,83 +70,95 @@ namespace Battleships
                         {
                             pos[1] = i + 1;
                             pos[0] = j;
-                            if (enemy.board.CheckHit(pos, boardToShoot))
+                            if (boardToShoot.board[pos[1], pos[0]] != 2 && boardToShoot.board[pos[1], pos[0]] != 3)
                             {
-                                if (enemy.board.AllShipsSunk())
+                                if (enemy.board.CheckHit(pos, boardToShoot))
                                 {
+                                    if (enemy.board.AllShipsSunk())
+                                    {
+                                        return;
+                                    }
+                                    AutomaticAttack(enemy);
                                     return;
                                 }
-                                AutomaticAttack(enemy);
-                                return;
-                            }
-                            else
-                            {
-                                boardToShoot.board[pos[1], pos[0]] = 2;
-                                return;
+                                else
+                                {
+                                    boardToShoot.board[pos[1], pos[0]] = 2;
+                                    return;
+                                }
                             }
                         }
                         if (i - 1 >= 0 && boardToShoot.board[i - 1, j] == 0)
                         {
                             pos[1] = i - 1;
                             pos[0] = j;
-                            if (enemy.board.CheckHit(pos, boardToShoot))
+
+                            if (boardToShoot.board[pos[1], pos[0]] != 2 && boardToShoot.board[pos[1], pos[0]] != 3)
                             {
-                                if (enemy.board.AllShipsSunk())
+                                if (enemy.board.CheckHit(pos, boardToShoot))
                                 {
+                                    if (enemy.board.AllShipsSunk())
+                                    {
+                                        return;
+                                    }
+                                    AutomaticAttack(enemy);
                                     return;
                                 }
-                                AutomaticAttack(enemy);
-                                return;
-                            }
-                            else
-                            {
-                                boardToShoot.board[pos[1], pos[0]] = 2;
-                                return;
+                                else
+                                {
+                                    boardToShoot.board[pos[1], pos[0]] = 2;
+                                    return;
+                                }
                             }
                         }
                         if (j + 1 < 10 && boardToShoot.board[i, j + 1] == 0)
                         {
                             pos[1] = i;
                             pos[0] = j + 1;
-                            if (enemy.board.CheckHit(pos, boardToShoot))
+                            if (boardToShoot.board[pos[1], pos[0]] != 2 && boardToShoot.board[pos[1], pos[0]] != 3)
                             {
-                                if (enemy.board.AllShipsSunk())
+                                if (enemy.board.CheckHit(pos, boardToShoot))
                                 {
+                                    if (enemy.board.AllShipsSunk())
+                                    {
+                                        return;
+                                    }
+                                    AutomaticAttack(enemy);
                                     return;
                                 }
-                                AutomaticAttack(enemy);
-                                return;
-                            }
-                            else
-                            {
-                                boardToShoot.board[pos[1], pos[0]] = 2;
-                                return;
+                                else
+                                {
+                                    boardToShoot.board[pos[1], pos[0]] = 2;
+                                    return;
+                                }
                             }
                         }
                         if (j - 1 >= 0 && boardToShoot.board[i, j - 1] == 0)
                         {
                             pos[1] = i;
                             pos[0] = j - 1;
-                            if (enemy.board.CheckHit(pos, boardToShoot))
+                            if (boardToShoot.board[pos[1], pos[0]] != 2 && boardToShoot.board[pos[1], pos[0]] != 3)
                             {
-                                if (enemy.board.AllShipsSunk())
+                                if (enemy.board.CheckHit(pos, boardToShoot))
                                 {
+                                    if (enemy.board.AllShipsSunk())
+                                    {
+                                        return;
+                                    }
+                                    AutomaticAttack(enemy);
                                     return;
                                 }
-                                AutomaticAttack(enemy);
-                                return;
-                            }
-                            else
-                            {
-                                boardToShoot.board[pos[1], pos[0]] = 2;
-                                return;
+                                else
+                                {
+                                    boardToShoot.board[pos[1], pos[0]] = 2;
+                                    return;
+                                }
                             }
                         }
                     }
                 }
             }
-            pos[1] = random.Next(10);
-            pos[0] = random.Next(10);
+
 
             if (boardToShoot.board[pos[1], pos[0]] == 3 || boardToShoot.board[pos[1], pos[0]] == 2)
             {
@@ -161,14 +178,13 @@ namespace Battleships
             {
                 boardToShoot.board[pos[1], pos[0]] = 2;
             }
-            Console.WriteLine("Komputer strzela na pozycje: " + pos[0] + " " + pos[1]);
             Console.ReadLine();
         }
         public void Attack(Player enemy)
         {
             Console.WriteLine("Atak gracza: " + name);
             board.PrintBoardAttack(boardToShoot.board);
-            int[] pos = board.ValidateAndGetPlayerMove();
+            int[] pos = board.ValidateAndGetPlayerMove(boardToShoot.board,false, true);
             if (boardToShoot.board[pos[1], pos[0]] == 3 || boardToShoot.board[pos[1], pos[0]] == 2)
             {
                 Console.Clear();
@@ -191,7 +207,7 @@ namespace Battleships
             {
                 Console.WriteLine("Pudlo!...");
                 Console.ReadLine();
-                boardToShoot.board[pos[1], pos[0]] = 2;
+                boardToShoot.board[pos[1], pos[0]] = 3;
             }
         }
     }

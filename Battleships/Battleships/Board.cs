@@ -22,7 +22,6 @@ namespace Battleships
                 }
             }
         }
-
         Ship FindFreeShip(Ship.ShipType type)
         {
             for (int i = 0; i < 10; i++)
@@ -59,13 +58,15 @@ namespace Battleships
             shipAmount = 0;
             while (shipAmount < 2)
             {
-                if (!CanPlaceObject(1, 3) || !CanPlaceObject(3, 1))
+                if (!CanPlaceObject(3) || !CanPlaceObject(3))
                 {
                     Console.Clear();
-                    Console.WriteLine("Nie mozna postawic statku o dlugosci 3, sprobuj ustawic wszystko jeszcze raz:");
+                    Console.WriteLine("Nie mozna postawic statku o dlugosci 3, sprobuj ustawic wszystko jeszcze raz...");
+                    Console.ReadLine();
                     PrepareBoard();
                     ships = new Ship[10];
                     SetupShips();
+
                     return;
                 }
                 Console.Clear();
@@ -76,10 +77,11 @@ namespace Battleships
             shipAmount = 0;
             while (shipAmount < 1)
             {
-                if (!CanPlaceObject(1, 4) || !CanPlaceObject(4, 1))
+                if (!CanPlaceObject(4) || !CanPlaceObject(4))
                 {
                     Console.Clear();
-                    Console.WriteLine("Nie mozna postawic statku o dlugosci 4, sprobuj ustawic wszystko jeszcze raz:");
+                    Console.WriteLine("Nie mozna postawic statku o dlugosci 4, sprobuj ustawic wszystko jeszcze raz...");
+                    Console.ReadLine();
                     PrepareBoard();
                     ships = new Ship[10];
                     SetupShips();
@@ -305,7 +307,7 @@ namespace Battleships
             PrintBoard();
 
             Console.WriteLine("Podaj pozycję statku o dlugosci " + shipLenghtToPrint);
-            int[] playerMove = ValidateAndGetPlayerMove();
+            int[] playerMove = ValidateAndGetPlayerMove(null);
             int playerMovePositionValue = board[playerMove[1], playerMove[0]];
 
             if (playerMovePositionValue == 1 || playerMovePositionValue == 4)
@@ -394,20 +396,20 @@ namespace Battleships
                     if (value == 1)
                     {
                         Console.Clear();
-                        Console.WriteLine("Nie mozna tu postawic statku, sprobuj jeszcze raz:");
+                        Console.WriteLine("Nie mozna tu postawic statku, sprobuj jeszcze raz. Kliknij aby sprobowac jeszcze raz.");
                         board = backupBoard.Clone() as int[,];
                         PrintBoard();
                         Console.ReadLine();
-                        SetupShip(type, shipLenghtToPrint);
+                        SetupShip(type, shipLenghtToPrint, ship);
                         return;
                     }
 
                     Console.Clear();
-                    Console.WriteLine("Niestety twoj statek sie nie miesci, ustaw go jeszcze raz:");
+                    Console.WriteLine("Nie mozna tu postawic statku, sprobuj jeszcze raz. Kliknij aby sprobowac jeszcze raz.");
                     board = backupBoard.Clone() as int[,];
                     PrintBoard();
                     Console.ReadLine();
-                    SetupShip(type, shipLenghtToPrint);
+                    SetupShip(type, shipLenghtToPrint, ship);
                     return;
                 }
 
@@ -427,6 +429,7 @@ namespace Battleships
 
         int TryPlacingPartOfShip(bool firstMove, int[] firstPlayerMove, Ship ship, int index)
         {
+            
             bool canPlayerPlaceShip = false;
             for (int i = 0; i < 10; i++)
             {
@@ -443,7 +446,7 @@ namespace Battleships
             // 0 = ok -1 = restart 1 = start again
             PrintBoard(true);
             Console.WriteLine("Podaj pozycję statku: ");
-            int[] newPlayerMove = ValidateAndGetPlayerMove(true);
+            int[] newPlayerMove = ValidateAndGetPlayerMove(null,true);
 
             if (board[newPlayerMove[1], newPlayerMove[0]] != 5)
             {
@@ -480,7 +483,6 @@ namespace Battleships
                     }
                 }
 
-                // tu zmienilem
                 TryChangeBoardPositionTo4(newPlayerMove[1] - 1, newPlayerMove[0]);
                 TryChangeBoardPositionTo4(newPlayerMove[1] + 1, newPlayerMove[0]);
 
@@ -521,7 +523,7 @@ namespace Battleships
                     }
                 }
 
-                if (!canPlayerPlaceShip)
+                if (!canPlayerPlaceShip && ship.locationOfShipPart.GetLength(0) - 1 != index)
                 {
                     return -1;
                 }
@@ -578,8 +580,7 @@ namespace Battleships
                                 if (board[i, j] == 5) canPlayerPlaceShip = true;
                             }
                         }
-
-                        if (!canPlayerPlaceShip)
+                        if (!canPlayerPlaceShip && ship.locationOfShipPart.GetLength(0)-1 != index)
                         {
                             return -1;
                         }
@@ -599,43 +600,50 @@ namespace Battleships
                 board[x, y] = 4;
             }
         }
-        bool CanPlaceObject(int width, int height)
+        bool CanPlaceObject(int shipLength)
         {
-            for (int i = 0; i <= board.GetLength(0) - width; i++)
+            int rows = board.GetLength(0);
+            int cols = board.GetLength(1);
+
+            // Sprawdzenie poziome
+            for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j <= board.GetLength(1) - height; j++)
+                for (int j = 0; j <= cols - shipLength; j++)
                 {
-                    bool horizontalFit = true;
-                    bool verticalFit = true;
-
-                    // Sprawdzanie poziomego ustawienia
-                    for (int k = 0; k < width; k++)
-                    {
-                        if (board[i + k, j] != 0)
-                        {
-                            horizontalFit = false;
-                            break;
-                        }
-                    }
-
-                    // Sprawdzanie pionowego ustawienia
-                    for (int k = 0; k < height; k++)
+                    bool canPlace = true;
+                    for (int k = 0; k < shipLength; k++)
                     {
                         if (board[i, j + k] != 0)
                         {
-                            verticalFit = false;
+                            canPlace = false;
                             break;
                         }
                     }
+                    if (canPlace) return true;
+                }
+            }
 
-                    if (horizontalFit || verticalFit)
-                        return true;
+            // Sprawdzenie pionowe
+            for (int i = 0; i <= rows - shipLength; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    bool canPlace = true;
+                    for (int k = 0; k < shipLength; k++)
+                    {
+                        if (board[i + k, j] != 0)
+                        {
+                            canPlace = false;
+                            break;
+                        }
+                    }
+                    if (canPlace) return true;
                 }
             }
 
             return false;
         }
-        public int[] ValidateAndGetPlayerMove(bool forPlacingShipsLongerThanOne = false, bool attack = false)
+        public int[] ValidateAndGetPlayerMove(int[,] boardToShoot, bool forPlacingShipsLongerThanOne = false, bool attack = false)
         {
             int[] result = new int[2];
 
@@ -647,13 +655,13 @@ namespace Battleships
                 Console.WriteLine("Nieprawidlowy input, sprobuj ponownie");
                 if (attack)
                 {
-                    PrintBoardAttack(board);
+                    PrintBoardAttack(boardToShoot);
                 }
                 else
                 {
                     PrintBoard(forPlacingShipsLongerThanOne);
                 }
-                return ValidateAndGetPlayerMove(forPlacingShipsLongerThanOne);
+                return ValidateAndGetPlayerMove(boardToShoot,forPlacingShipsLongerThanOne, attack);
             }
 
             Console.WriteLine(input);
@@ -666,14 +674,14 @@ namespace Battleships
                 Console.Clear();
                 if (attack)
                 {
-                    PrintBoardAttack(board);
+                    PrintBoardAttack(boardToShoot);
                 }
                 else
                 {
                     PrintBoard(forPlacingShipsLongerThanOne);
                 }
                 Console.WriteLine("Nieprawidlowy input, sprobuj ponownie");
-                return ValidateAndGetPlayerMove(forPlacingShipsLongerThanOne);
+                return ValidateAndGetPlayerMove(boardToShoot,forPlacingShipsLongerThanOne, attack);
             }
 
             inputLetter = input.ToLower()[0] - 'a';
@@ -686,7 +694,7 @@ namespace Battleships
                 Console.Clear();
                 if (attack)
                 {
-                    PrintBoardAttack(board);
+                    PrintBoardAttack(boardToShoot);
                 }
                 else
                 {
@@ -694,12 +702,12 @@ namespace Battleships
                 }
                 Console.WriteLine("Input nie jest na planszy: ");
 
-                return ValidateAndGetPlayerMove(forPlacingShipsLongerThanOne);
+                return ValidateAndGetPlayerMove(boardToShoot, forPlacingShipsLongerThanOne, attack);
             }
 
             if ((inputLetter < 0 || inputLetter > 9) || (inputNumber < 0 || inputNumber > 9))
             {
-                return ValidateAndGetPlayerMove(forPlacingShipsLongerThanOne);
+                return ValidateAndGetPlayerMove(boardToShoot,forPlacingShipsLongerThanOne, attack);
             }
 
             result[0] = inputLetter;
@@ -864,7 +872,6 @@ namespace Battleships
         public bool AllShipsSunk()
         {
             bool allSunk = true;
-            Console.WriteLine("Statki zatopione: ");
             foreach (var ship in ships)
             {
                 if (ship != null && !ship.IsSunk())
